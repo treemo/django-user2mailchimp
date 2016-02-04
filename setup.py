@@ -12,13 +12,13 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name='django-user2mailchimp',
-    version='1.0.1',
+    version='1.0.0',
     packages=['user2mailchimp'],
     include_package_data=True,
     license='BSD License',
     description='Synchronize users to mailing list Mailchimp.',
     long_description=README,
-    url='https://www.example.com/',
+    url='https://github.com/treemo/user2mailchimp',
     author='Treemo',
     author_email='treemo@hotmail.fr',
     install_requires=[
