@@ -65,6 +65,6 @@ def update_member(user):
     list_id = api.lists.list({'name': MAILCHIMP_LIST_NAME})['data'][0]['id']
 
     # send to mailchip
-    email = {'email': getattr(old_user, 'email') or user.email}
+    email = {'email': getattr(old_user, 'email') or infos['EMAIL']}
     api.lists.subscribe(list_id, email, infos, double_optin=False,
                         update_existing=True)
