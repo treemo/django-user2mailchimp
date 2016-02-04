@@ -2,7 +2,7 @@ import logging
 import mailchimp
 
 from django.conf import settings
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from .settings import MAILCHIMP_ASSOC, MAILCHIMP_API_KEY,MAILCHIMP_LIST_NAME
@@ -11,9 +11,14 @@ from .settings import MAILCHIMP_ASSOC, MAILCHIMP_API_KEY,MAILCHIMP_LIST_NAME
 logger = logging.getLogger(__name__)
 
 
-@receiver(pre_save, sender=User)
+@receiver(pre_save)
 def user_pre_save(sender, instance, raw, using, update_fields, **kwargs):
     """When user change its email, we want to update our mailing list"""
+
+    # is user ? (or subclasses)
+    if not isinstance(instance, AbstractUser):
+        return
+
     try:
         update_member(instance)
 
@@ -22,6 +27,7 @@ def user_pre_save(sender, instance, raw, using, update_fields, **kwargs):
         logger.error(e)
         if settings.DEBUG:
             raise
+        raise
 
 
 def update_member(user):
@@ -39,7 +45,7 @@ def update_member(user):
     old_user = None
     if user.pk:
         # we retrieve the old user object
-        old_user = User.objects.get(pk=user.pk)
+        old_user = user.__class__.objects.get(pk=user.pk)
 
         # Mailchip value not changed, we quit.
         if not [True for k in MAILCHIMP_ASSOC.values() if
